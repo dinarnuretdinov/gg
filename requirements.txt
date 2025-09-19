@@ -1,1 +1,5 @@
-
+streamlit
+Pillow
+transformers
+tensorflow
+tf-keras
