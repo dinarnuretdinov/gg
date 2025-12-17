@@ -18,7 +18,7 @@ if uploaded_file is not None:
     st.image(image, caption="Загруженное изображение", use_container_width = True)
 
     # Инициализация модели для классификации изображений
-    classifier = pipeline("image-classification", model="google/vit-base-patch16-224")
+    classifier = pipeline("image-classification", model="./local_vit")
 
     # Распознавание изображения и запись результатов
     results  = classifier(image)
