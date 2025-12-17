@@ -1,29 +1,34 @@
 import streamlit as st
 from transformers import pipeline
 from PIL import Image
-#Заголовок приложения
+
 st.title("Распознавание изображений с помощью Hugging Face")
 
-#Добавим ссылку на чат в телеграм
 url = "https://t.me/+qHHDOyGAj9llM2Qy"
 st.write("Ссылка для перехода в чат с материалами [тык](%s)" % url)
 
-#Добавляем блок с загрузкой изображения от пользователя
-uploaded_file = st.file_uploader("Загрузите изображение", type = ["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader(
+    "Загрузите изображение",
+    type=["jpg", "jpeg", "png"]
+)
 
-#Проверка, загружено ли изображение
+# Кэшируем модель
+@st.cache_resource
+def load_model():
+    return pipeline(
+        "image-classification",
+        model="google/vit-base-patch16-224"
+    )
+
 if uploaded_file is not None:
-    # Открываем изображение с помощью PIL и выводим на экран
-    image = Image.open(uploaded_file)
-    st.image(image, caption="Загруженное изображение", use_container_width = True)
+    image = Image.open(uploaded_file).convert("RGB")
+    st.image(image, caption="Загруженное изображение", use_container_width=True)
 
-    # Инициализация модели для классификации изображений
-    classifier = pipeline("image-classification", model="google/vit-base-patch16-224")
+    classifier = load_model()
 
-    # Распознавание изображения и запись результатов
-    results  = classifier(image)
+    with st.spinner("Распознаю изображение..."):
+        results = classifier(image)
 
-    st.write("**Результаты распознавания**")
+    st.write("### Результаты распознавания")
     for result in results:
-        st.write(f"{result['label']}: {result['score']:.2f}")
-        
+        st.write(f"**{result['label']}**: {result['score']:.2f}")
