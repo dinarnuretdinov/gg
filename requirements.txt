@@ -3,3 +3,4 @@ Pillow
 transformers
 tensorflow
 tf-keras
+torch
